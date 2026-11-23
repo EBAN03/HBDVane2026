@@ -45,13 +45,18 @@
   <script src="js/gallery.js" defer></script>
   <!-- letter.js = aparición suave de la carta (sección 04) -->
   <script src="js/letter.js" defer></script>
+  <!-- closing.js = cupón final (sección 05). Los datos de la cita se editan al inicio de ese archivo. -->
+  <script src="js/closing.js" defer></script>
+  <!-- music.js = reproductor de música (audio en assets/audio/cancion.mp3) -->
+  <script src="js/music.js" defer></script>
 
   <!-- Si el navegador tiene JavaScript desactivado, saltamos la bienvenida
        y mostramos el contenido sin animaciones -->
   <noscript>
     <style>
       .intro { display: none !important; }
-      .reveal { opacity: 1 !important; transform: none !important; }
+      .reveal, .tk-in { opacity: 1 !important; transform: none !important; }
+      .claim { display: none !important; }
     </style>
   </noscript>
 </head>
@@ -290,6 +295,84 @@
 
     </section>
 
+    <!-- ---------- 05 · CUPÓN (CIERRE) ---------- -->
+    <section class="closing" aria-labelledby="closing-title">
+
+      <p class="eyebrow reveal">05 — Un regalo</p>
+
+      <div class="ticket-wrap reveal" id="ticket-wrap" style="--d:.15s">
+
+        <svg class="deco deco--tk-sprig" aria-hidden="true"><use href="#sprig"/></svg>
+        <svg class="deco deco--tk-flower" aria-hidden="true"><use href="#flower"/></svg>
+        <svg class="deco deco--tk-star" aria-hidden="true"><use href="#star"/></svg>
+        <div class="ticket__seal" aria-hidden="true"><svg><use href="#heart"/></svg></div>
+
+        <div class="ticket">
+
+          <!-- Parte principal del cupón -->
+          <div class="ticket__main">
+            <p class="eyebrow tk-in" style="--i:0">Invitación especial</p>
+            <h2 id="closing-title" class="ticket__title tk-in" style="--i:1">Un regalo para <em>nosotros</em></h2>
+            <span class="orn tk-in" style="--i:2" aria-hidden="true"><svg><use href="#heart"/></svg></span>
+            <p class="ticket__vale tk-in" style="--i:3">Vale por una cita especial</p>
+
+            <!-- ======================================================
+                 ✏️ DATOS DE LA CITA
+                 Se escriben en js/closing.js (objeto COUPON), no aquí.
+                 Los textos de abajo son solo un respaldo.
+                 ====================================================== -->
+            <dl class="ticket__list tk-in" style="--i:4">
+              <div class="ticket__row" data-coupon-row>
+                <dt>Plan</dt>
+                <dd data-coupon="plan">[Escribe aquí el plan]</dd>
+              </div>
+              <div class="ticket__row" data-coupon-row>
+                <dt>Fecha</dt>
+                <dd data-coupon="date">[Escribe aquí la fecha]</dd>
+              </div>
+              <div class="ticket__row" data-coupon-row>
+                <dt>Una frase</dt>
+                <dd data-coupon="note">[Escribe aquí una frase sorpresa]</dd>
+              </div>
+            </dl>
+
+            <!-- Firma personal (cámbiala si quieres) -->
+            <footer class="ticket__foot tk-in" style="--i:5">
+              <p class="ticket__close">Con todo mi cariño,</p>
+              <p class="ticket__sign">JonEBAN</p>
+            </footer>
+          </div>
+
+          <!-- Talón (se "rompe" por la línea punteada) -->
+          <div class="ticket__stub">
+            <button class="btn btn--claim" id="claim-btn" type="button"
+                    aria-expanded="false" aria-controls="claim-panel">
+              <span id="claim-label">Reclamar mi sorpresa</span>
+            </button>
+
+            <!-- Mensaje oculto: aparece al reclamar. Su texto está en closing.js (surprise) -->
+            <div class="claim" id="claim-panel" role="region" aria-label="Tu sorpresa" inert>
+              <div class="claim__inner">
+                <span class="orn" aria-hidden="true"><svg><use href="#heart"/></svg></span>
+                <p class="claim__text" id="claim-text" tabindex="-1" data-coupon="surprise">[Escribe aquí el mensaje que se revela al reclamar]</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ==========================================================
+           ✏️ DESPEDIDA ROMÁNTICA (cambia el texto si quieres)
+           ========================================================== -->
+      <div class="closing__end">
+        <span class="orn reveal" aria-hidden="true"><svg><use href="#heart"/></svg></span>
+        <p class="closing__bye reveal" style="--d:.1s">Gracias por llegar hasta aquí.<br>Cada página de esta historia lleva tu nombre, y las mejores todavía las estamos escribiendo.</p>
+        <p class="eyebrow reveal" style="--d:.2s">Continuará…</p>
+      </div>
+
+    </section>
+
     <!-- Indicación discreta para seguir desplazándose (se oculta al bajar) -->
     <div class="scroll-cue" id="scroll-cue" aria-hidden="true">
       <span class="scroll-cue__label">Sigue bajando</span>
@@ -350,6 +433,16 @@
       </div>
     </div>
   </section>
+
+  <!-- Reproductor flotante (lo controla js/music.js). Aparece al abrir el sobre. -->
+  <div class="player" id="player" data-state="paused" hidden>
+    <button class="player__btn" id="player-btn" type="button" aria-label="Reproducir música" aria-pressed="false">
+      <svg class="player__ico player__ico--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      <svg class="player__ico player__ico--pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+    </button>
+    <span class="player__label" id="player-label" aria-live="polite"></span>
+    <span class="player__eq" aria-hidden="true"><i></i><i></i><i></i></span>
+  </div>
 
   <!-- Capa de globos: encima de todo, no bloquea toques ni scroll -->
   <div id="balloons" class="balloons" aria-hidden="true"></div>
