@@ -36,13 +36,17 @@
   </script>
 
   <!-- "defer": el script se ejecuta cuando el HTML ya está listo -->
+  <!-- main.js = bienvenida (sobre). celebration.js = sección de cumpleaños.
+       El orden importa: primero la bienvenida, luego la sección. -->
   <script src="js/main.js" defer></script>
+  <script src="js/celebration.js" defer></script>
 
-  <!-- Si el navegador tiene JavaScript desactivado, saltamos la bienvenida -->
+  <!-- Si el navegador tiene JavaScript desactivado, saltamos la bienvenida
+       y mostramos el contenido sin animaciones -->
   <noscript>
     <style>
       .intro { display: none !important; }
-      .main__inner { opacity: 1 !important; transform: none !important; }
+      .reveal { opacity: 1 !important; transform: none !important; }
     </style>
   </noscript>
 </head>
@@ -74,6 +78,18 @@
         <path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/>
       </symbol>
 
+      <!-- Flor pequeña de cinco pétalos (el color de los pétalos viene del CSS) -->
+      <symbol id="flower" viewBox="0 0 24 24">
+        <g fill="currentColor">
+          <ellipse cx="12" cy="5.6" rx="3.4" ry="5" />
+          <ellipse cx="12" cy="5.6" rx="3.4" ry="5" transform="rotate(72 12 12)" />
+          <ellipse cx="12" cy="5.6" rx="3.4" ry="5" transform="rotate(144 12 12)" />
+          <ellipse cx="12" cy="5.6" rx="3.4" ry="5" transform="rotate(216 12 12)" />
+          <ellipse cx="12" cy="5.6" rx="3.4" ry="5" transform="rotate(288 12 12)" />
+        </g>
+        <circle cx="12" cy="12" r="2.2" fill="#193D32" />
+      </symbol>
+
       <!-- Corazón -->
       <symbol id="heart" viewBox="0 0 24 24">
         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -83,15 +99,83 @@
 
   <!-- =====================================================
        PÁGINA PRINCIPAL (queda debajo de la bienvenida)
-       Por ahora es solo un marcador de posición.
-       Aquí irán las secciones 2 a 5.
+       Los elementos con la clase "reveal" aparecen con una
+       animación suave al llegar a la pantalla. La variable
+       --d es el retraso (para que entren uno tras otro).
        ===================================================== -->
   <main id="main" class="main">
-    <div class="main__inner">
-      <p class="eyebrow eyebrow--dark">02 — Cumpleaños</p>
-      <h2 class="main__title">¡Feliz cumpleaños,<br><em>Vanessa</em>!</h2>
-      <p class="main__note">Aquí continuará la historia…</p>
+
+    <!-- ---------- 02 · CUMPLEAÑOS ---------- -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__inner">
+
+        <!-- Título y subtítulo -->
+        <header class="hero__head">
+          <svg class="deco deco--flower-a" aria-hidden="true"><use href="#flower"/></svg>
+          <svg class="deco deco--star-a" aria-hidden="true"><use href="#star"/></svg>
+
+          <p class="eyebrow eyebrow--dark reveal">02 — Cumpleaños</p>
+
+          <h1 id="hero-title" class="hero__title reveal" style="--d:.1s">¡Feliz<br>cumpleaños,<br><em>Vanessa</em>!</h1>
+
+          <!-- Subtítulo romántico: cámbialo por el que prefieras -->
+          <p class="hero__subtitle reveal" style="--d:.3s">Un día para celebrarte, y una excusa más para decirte cuánto te quiero.</p>
+        </header>
+
+        <span class="hero__rule reveal" style="--d:.45s" aria-hidden="true"></span>
+
+        <!-- Calendario ilustrado.
+             El mes, el año y el día marcado NO se escriben aquí:
+             se toman de BIRTHDAY al inicio de js/celebration.js.
+             Los textos de abajo son solo un respaldo. -->
+        <div class="cal-wrap">
+          <svg class="deco deco--sprig" aria-hidden="true"><use href="#sprig"/></svg>
+          <svg class="deco deco--flower-b" aria-hidden="true"><use href="#flower"/></svg>
+          <svg class="deco deco--flower-c" aria-hidden="true"><use href="#flower"/></svg>
+
+          <div class="cal reveal" id="calendar" style="--d:.55s">
+            <div class="cal__head">
+              <span class="cal__month" data-bday="month">Noviembre</span>
+              <span class="cal__year" data-bday="year">2026</span>
+            </div>
+            <div class="cal__weekdays" aria-hidden="true">
+              <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+            </div>
+            <!-- Los días se generan automáticamente con JavaScript -->
+            <div class="cal__grid" id="calendar-grid" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <!-- Mensaje: por qué esta fecha es especial -->
+        <div class="hero__message">
+          <svg class="deco deco--heart" aria-hidden="true"><use href="#heart"/></svg>
+
+          <p class="eyebrow eyebrow--dark reveal">Una fecha especial</p>
+          <p class="hero__date reveal" style="--d:.1s" data-bday="long">25 de noviembre</p>
+          <p class="hero__text reveal" style="--d:.2s">
+            Hay fechas que pasan de largo en el calendario y otras que se quedan para siempre.
+            Esta es de las que se quedan: el día en que empezó la persona que hoy hace mi vida más bonita.
+            No celebro solo que cumples un año más; celebro que existes, y que puedo caminar a tu lado.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ---------- 03 · RECUERDOS (PROVISIONAL) ----------
+         Solo sirve para que haya algo hacia donde desplazarse.
+         En el siguiente paso se reemplaza por el carrusel. -->
+    <section class="next" aria-label="Sección siguiente">
+      <p class="eyebrow eyebrow--dark">03 — Recuerdos</p>
+      <p class="next__note">Aquí irá el carrusel de fotos…</p>
+    </section>
+
+    <!-- Indicación discreta para seguir desplazándose (se oculta al bajar) -->
+    <div class="scroll-cue" id="scroll-cue" aria-hidden="true">
+      <span class="scroll-cue__label">Sigue bajando</span>
+      <i class="scroll-cue__line"></i>
     </div>
+
   </main>
 
   <!-- =====================================================
@@ -110,7 +194,8 @@
     </div>
 
     <p class="eyebrow intro__eyebrow">01 — Bienvenida</p>
-    <p class="intro__date" aria-hidden="true">25 · Nov · 2026</p>
+    <!-- La fecha se actualiza sola desde BIRTHDAY (js/celebration.js) -->
+    <p class="intro__date" aria-hidden="true" data-bday="short">25 · Nov · 2026</p>
 
     <div class="stage">
 
@@ -137,7 +222,8 @@
         </div>
       </div>
 
-      <h1 id="intro-title" class="intro__title">Tienes una sorpresa esperándote</h1>
+      <!-- (h2 y no h1: el título principal de la página ahora es el de cumpleaños) -->
+      <h2 id="intro-title" class="intro__title">Tienes una sorpresa esperándote</h2>
 
       <div class="intro__action">
         <button id="open-btn" class="btn" type="button">Abrir sorpresa</button>
