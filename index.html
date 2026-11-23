@@ -37,9 +37,14 @@
 
   <!-- "defer": el script se ejecuta cuando el HTML ya está listo -->
   <!-- main.js = bienvenida (sobre). celebration.js = sección de cumpleaños.
+       gallery.js = carrusel de recuerdos. letter.js = carta.
        El orden importa: primero la bienvenida, luego la sección. -->
   <script src="js/main.js" defer></script>
   <script src="js/celebration.js" defer></script>
+  <!-- gallery.js = carrusel de fotos (sección 03) -->
+  <script src="js/gallery.js" defer></script>
+  <!-- letter.js = aparición suave de la carta (sección 04) -->
+  <script src="js/letter.js" defer></script>
 
   <!-- Si el navegador tiene JavaScript desactivado, saltamos la bienvenida
        y mostramos el contenido sin animaciones -->
@@ -162,12 +167,127 @@
       </div>
     </section>
 
-    <!-- ---------- 03 · RECUERDOS (PROVISIONAL) ----------
-         Solo sirve para que haya algo hacia donde desplazarse.
-         En el siguiente paso se reemplaza por el carrusel. -->
-    <section class="next" aria-label="Sección siguiente">
-      <p class="eyebrow eyebrow--dark">03 — Recuerdos</p>
-      <p class="next__note">Aquí irá el carrusel de fotos…</p>
+    <!-- ---------- 03 · RECUERDOS ---------- -->
+    <section class="memories" aria-labelledby="memories-title">
+
+      <header class="memories__head">
+        <svg class="deco deco--gal-flower" aria-hidden="true"><use href="#flower"/></svg>
+        <svg class="deco deco--gal-star" aria-hidden="true"><use href="#star"/></svg>
+
+        <p class="eyebrow eyebrow--dark reveal">03 — Recuerdos</p>
+        <h2 id="memories-title" class="memories__title reveal" style="--d:.1s">Mis momentos favoritos tienen algo en común: <em>tú</em></h2>
+        <p class="memories__subtitle reveal" style="--d:.25s">Pequeños instantes que guardo como tesoros.</p>
+      </header>
+
+      <div class="gallery reveal" style="--d:.35s">
+
+        <!-- Botones: solo se ven en pantallas grandes con ratón -->
+        <button class="gallery__btn gallery__btn--prev" id="gallery-prev" type="button" aria-label="Foto anterior">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button class="gallery__btn gallery__btn--next" id="gallery-next" type="button" aria-label="Foto siguiente">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+
+        <!-- ==========================================================
+             FOTOS DEL CARRUSEL  ✏️
+             • AÑADIR una foto: copia un bloque <li>…</li> completo y pégalo.
+             • QUITAR una foto: borra su bloque <li>…</li>.
+             • REORDENAR: mueve los bloques <li> de sitio (el orden de aquí
+               es el orden del carrusel).
+             En cada bloque cambia 3 cosas:
+               1) src="assets/images/foto-0X.jpg"   → el archivo de la foto
+               2) data-file="foto-0X.jpg"           → el mismo nombre (solo se
+                  usa para avisarte si el archivo no existe)
+               3) alt="…"                           → describe la foto (ayuda a
+                  personas que usan lector de pantalla)
+             El texto <p class="polaroid__caption"> es OPCIONAL: bórralo si
+             quieres una foto sin texto.
+             Los puntitos de abajo se crean solos según cuántas fotos haya.
+             ========================================================== -->
+        <ul class="gallery__track" id="gallery-track" role="list" tabindex="0"
+            aria-label="Fotografías. Desliza o usa las flechas del teclado">
+
+          <li class="polaroid">
+            <div class="polaroid__frame" data-file="foto-01.jpg">
+              <img src="assets/images/foto-01.jpg" alt="Recuerdo 1 — describe aquí la foto"
+                   width="800" height="1000" loading="lazy" decoding="async">
+            </div>
+            <p class="polaroid__caption">Nuestro primer recuerdo</p>
+          </li>
+
+          <li class="polaroid">
+            <div class="polaroid__frame" data-file="foto-02.jpg">
+              <img src="assets/images/foto-02.jpg" alt="Recuerdo 2 — describe aquí la foto"
+                   width="800" height="1000" loading="lazy" decoding="async">
+            </div>
+            <p class="polaroid__caption">Ese día que no quería que terminara</p>
+          </li>
+
+          <li class="polaroid">
+            <!-- Esta foto no lleva texto: sin <p class="polaroid__caption"> -->
+            <div class="polaroid__frame" data-file="foto-03.jpg">
+              <img src="assets/images/foto-03.jpg" alt="Recuerdo 3 — describe aquí la foto"
+                   width="800" height="1000" loading="lazy" decoding="async">
+            </div>
+          </li>
+
+        </ul>
+
+        <!-- Indicadores de posición (los crea js/gallery.js) -->
+        <div class="gallery__dots" id="gallery-dots"></div>
+        <!-- Aviso para lectores de pantalla: «Foto 2 de 3» -->
+        <p class="sr-only" id="gallery-status" aria-live="polite"></p>
+      </div>
+
+    </section>
+
+    <!-- ---------- 04 · CARTA ---------- -->
+    <section class="words" aria-labelledby="words-title">
+
+      <div class="words__card" id="letter-card">
+
+        <!-- Sello con corazón (mismo del sobre de la bienvenida) -->
+        <div class="words__seal" aria-hidden="true"><svg><use href="#heart"/></svg></div>
+
+        <!-- Decoración sutil -->
+        <svg class="deco deco--words-sprig" aria-hidden="true"><use href="#sprig"/></svg>
+        <svg class="deco deco--words-flower" aria-hidden="true"><use href="#flower"/></svg>
+
+        <header class="words__head">
+          <p class="eyebrow eyebrow--dark lt-item">04 — Carta</p>
+          <h2 id="words-title" class="words__title lt-item">Unas palabras para ti</h2>
+          <span class="words__divider lt-item" aria-hidden="true"><svg><use href="#heart"/></svg></span>
+        </header>
+
+        <!-- ==========================================================
+             ✏️ AQUÍ VA TU CARTA  (TEXTO PROVISIONAL)
+             Cómo editarla:
+             • Cambia el texto dentro de cada <p>…</p>.
+             • Para añadir un párrafo, copia una línea
+               <p class="words__p lt-item">…</p> y pégala debajo.
+             • Para quitar uno, borra esa línea completa.
+             • Para un salto de línea dentro de un párrafo, escribe <br>.
+             • No quites class="lt-item": es lo que hace que aparezca
+               suavemente al llegar a él.
+             Consejo: párrafos de 2–4 frases se leen mucho mejor en el móvil.
+             ========================================================== -->
+        <div class="words__body">
+          <p class="words__greeting lt-item">Querida Vanessa,</p>
+
+          <p class="words__p lt-item">[TEXTO PROVISIONAL] Este espacio está reservado para tu carta. Borra estas líneas y escribe aquí lo que quieras decirle.</p>
+          <p class="words__p lt-item">[TEXTO PROVISIONAL] Cada párrafo aparecerá con suavidad cuando ella llegue a él, así que puedes escribir tantos como necesites.</p>
+          <p class="words__p lt-item">[TEXTO PROVISIONAL] Escríbela con tu propia voz y con tus propios recuerdos: esa es la parte que nadie más puede poner.</p>
+        </div>
+
+        <!-- Despedida y firma (cámbialas también si quieres) -->
+        <footer class="words__foot lt-item">
+          <p class="words__close">Con todo mi cariño,</p>
+          <p class="words__sign">JonEBAN</p>
+        </footer>
+
+      </div>
+
     </section>
 
     <!-- Indicación discreta para seguir desplazándose (se oculta al bajar) -->

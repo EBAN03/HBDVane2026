@@ -8,7 +8,7 @@
      5. Textos y botón
      6. Secuencia de apertura (animaciones)
      7. Globos
-     8. Página principal (sección 02 · cumpleaños)
+     8. Página principal (secciones 02 · cumpleaños, 03 · recuerdos y 04 · carta)
      9. Movimiento reducido
    ========================================================== */
 
@@ -487,7 +487,8 @@ html.is-locked body {
    8.2 Sección 02 · Cumpleaños (título, calendario, mensaje)
    8.3 Decoración
    8.4 Indicador "Sigue bajando"
-   8.5 Sección 03 provisional
+   8.5 Sección 03 · Recuerdos (carrusel)
+   8.6 Sección 04 · Carta
    ------------------------------------------------------- */
 
 /* 8.1 · Base */
@@ -801,23 +802,357 @@ html.is-locked body {
 }
 
 
-/* 8.5 · Sección 03 PROVISIONAL (se reemplaza por el carrusel) */
-.next {
+/* 8.5 · Sección 03 · Recuerdos (carrusel de polaroids) */
+.memories {
   position: relative;
   z-index: 2;
   margin-top: -36px;                 /* monta sobre la sección anterior */
-  min-height: 70vh;
-  min-height: 70svh;
-  padding: 80px 24px;
+  padding: 84px 0 128px;             /* abajo: sitio para que monte la sección 04 */
+  overflow: hidden;
   border-radius: 32px 32px 0 0;
-  background: var(--pink);
+  background:
+    radial-gradient(80% 30% at 0% 0%, rgba(248, 245, 239, .75) 0%, rgba(248, 245, 239, 0) 70%),
+    var(--pink);
   box-shadow: 0 -20px 40px -24px rgba(25, 61, 50, .25);
 }
-.next__note {
-  margin: 18px 0 0;
-  font: italic 500 24px/1.3 var(--font-serif);
-  opacity: .7;
+
+.memories__head {
+  position: relative;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
+.memories__title {
+  margin: 20px 0 16px;
+  font: 500 clamp(34px, 10.2vw, 46px)/1.08 var(--font-serif);
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+/* «tú» con el mismo trazo de resaltador que «Vanessa», pero en marfil */
+.memories__title em {
+  font-style: italic;
+  padding: 0 .1em;
+  margin: 0 -.1em;
+  background: linear-gradient(transparent 58%, var(--ivory) 58%, var(--ivory) 90%, transparent 90%);
+}
+.memories__subtitle {
+  margin: 0;
+  max-width: 16em;
+  font: italic 500 clamp(19px, 5.4vw, 22px)/1.35 var(--font-serif);
+  color: rgba(25, 61, 50, .82);
+}
+
+.deco--gal-flower { top: -6px;  right: 20px; width: 26px; height: 26px; color: var(--ivory); animation: sway 8s ease-in-out infinite alternate; }
+.deco--gal-star   { top: 108px; right: 52px; width: 10px; height: 10px; fill: var(--rose-deep); animation: twinkle 5s ease-in-out infinite 1s; }
+
+
+/* Carrusel: el deslizado y el "imán" al centro los hace el navegador */
+.gallery {
+  position: relative;
+  margin-top: 40px;
+}
+.gallery__track {
+  --card-w: min(74vw, 300px);        /* ancho de cada polaroid */
+  position: relative;                /* necesario para calcular posiciones en JS */
+  display: flex;
+  gap: 18px;
+  margin: 0;
+  /* Relleno lateral: así la primera y la última foto pueden quedar centradas.
+     El relleno vertical deja sitio a sombras e inclinación. */
+  padding: 18px calc((100% - var(--card-w)) / 2) 34px;
+  list-style: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;    /* deslizar el carrusel no mueve la página */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.gallery__track::-webkit-scrollbar { display: none; }
+.gallery__track:focus-visible {
+  outline: 2px solid var(--forest);
+  outline-offset: -4px;
+  border-radius: 16px;
+}
+
+/* La polaroid */
+.polaroid {
+  --tilt: 0deg;
+  position: relative;
+  flex: 0 0 var(--card-w);
+  margin: 0;
+  padding: 12px 12px 18px;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;          /* una foto por gesto, sin saltarse ninguna */
+  border-radius: 10px;
+  background: #FCFAF5;
+  box-shadow: 0 18px 32px -18px rgba(25, 61, 50, .45), 0 2px 6px rgba(25, 61, 50, .08);
+  opacity: .8;
+  transform: rotate(var(--tilt)) scale(.93);
+  transition: transform .7s var(--ease-out), opacity .5s ease;
+}
+.polaroid:nth-child(3n + 1) { --tilt: -1.6deg; }
+.polaroid:nth-child(3n + 2) { --tilt: 1.2deg; }
+.polaroid:nth-child(3n)     { --tilt: -.5deg; }
+/* La foto centrada se endereza y crece un poco */
+.polaroid.is-active {
+  opacity: 1;
+  transform: rotate(calc(var(--tilt) * .3)) scale(1);
+}
+/* Cintita adhesiva, solo en las fotos impares */
+.polaroid:nth-child(odd)::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -9px;
+  left: 50%;
+  width: 58px;
+  height: 18px;
+  border-radius: 2px;
+  background: rgba(169, 187, 168, .55);
+  transform: translateX(-50%) rotate(-3deg);
+}
+
+.polaroid__frame {
+  position: relative;
+  aspect-ratio: 4 / 5;               /* la proporción fija evita saltos de diseño */
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--pink-mid);
+}
+.polaroid__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;                 /* recorta en vez de deformar */
+}
+/* Sin texto debajo: más margen abajo, como una polaroid real */
+.polaroid__frame:last-child { margin-bottom: 28px; }
+
+.polaroid__caption {
+  margin: 14px 4px 2px;
+  text-align: center;
+  font: italic 500 20px/1.25 var(--font-serif);
+  color: rgba(25, 61, 50, .85);
+}
+
+/* Si la imagen no existe: recuadro rosa con el nombre del archivo esperado */
+.polaroid.is-missing img { opacity: 0; }
+.polaroid.is-missing .polaroid__frame::after {
+  content: "Falta " attr(data-file);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  text-align: center;
+  font: 500 11px/1.4 var(--font-sans);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(25, 61, 50, .55);
+}
+
+/* Indicadores de posición */
+.gallery__dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.gallery__dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(25, 61, 50, .25);
+  cursor: pointer;
+  transition: width .4s var(--ease-out), background .3s ease;
+}
+.gallery__dot::after {               /* zona táctil más grande que el punto */
+  content: "";
+  position: absolute;
+  inset: -14px -5px;
+}
+.gallery__dot[aria-current="true"] { width: 24px; background: var(--forest); }
+
+/* Botones anterior / siguiente: ocultos en el móvil */
+.gallery__btn {
+  display: none;
+  position: absolute;
+  z-index: 3;
+  top: calc(50% - 40px);
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(25, 61, 50, .25);
+  border-radius: 50%;
+  background: rgba(248, 245, 239, .92);
+  color: var(--forest);
+  cursor: pointer;
+  transition: background .3s ease, color .3s ease, opacity .3s ease;
+}
+.gallery__btn--prev { left:  max(16px, calc(50% - 280px)); }
+.gallery__btn--next { right: max(16px, calc(50% - 280px)); }
+.gallery__btn:disabled { opacity: .3; cursor: default; }
+.gallery__btn:not(:disabled):hover { background: var(--forest); color: var(--ivory); }
+
+@media (min-width: 768px) and (hover: hover) {
+  .gallery__btn { display: grid; }
+  .gallery__track { --card-w: 320px; }
+}
+
+.gallery__dot:focus-visible,
+.gallery__btn:focus-visible {
+  outline: 2px solid var(--forest);
+  outline-offset: 4px;
+}
+
+/* Texto solo para lectores de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* 8.6 · Sección 04 · Carta */
+.words {
+  position: relative;
+  z-index: 3;                        /* por encima de la sección 03 */
+  margin-top: -36px;                 /* monta sobre la sección anterior */
+  padding: 92px 14px 128px;          /* abajo: sitio para que monte la sección 05 */
+  overflow: hidden;
+  border-radius: 32px 32px 0 0;
+  background:
+    radial-gradient(90% 36% at 50% 0%, rgba(243, 220, 227, .65) 0%, rgba(243, 220, 227, 0) 70%),
+    radial-gradient(80% 30% at 100% 100%, rgba(243, 220, 227, .55) 0%, rgba(243, 220, 227, 0) 70%),
+    var(--ivory);
+  box-shadow: 0 -20px 40px -24px rgba(25, 61, 50, .25);
+}
+
+/* La tarjeta: papel de carta */
+.words__card {
+  position: relative;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 66px 24px 40px;
+  border: 1px solid rgba(169, 187, 168, .55);
+  border-radius: 20px;
+  background: #FCFAF5;
+  box-shadow: 0 30px 60px -30px rgba(25, 61, 50, .35), 0 2px 8px rgba(25, 61, 50, .06);
+}
+/* Filete interior fino (el mismo de la carta del sobre) */
+.words__card::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(169, 187, 168, .45);
+  border-radius: 13px;
+  pointer-events: none;
+}
+
+/* Sello sobre el borde superior */
+.words__seal {
+  position: absolute;
+  z-index: 2;
+  top: -27px;
+  left: 50%;
+  width: 54px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #2d5f4d, var(--forest) 72%);
+  box-shadow: 0 4px 10px rgba(25, 61, 50, .3);
+  transform: translateX(-50%);
+}
+.words__seal::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1px solid rgba(243, 220, 227, .35);
+}
+.words__seal svg { width: 44%; height: 44%; fill: var(--pink); }
+
+.deco--words-sprig  { z-index: 3; top: -46px; right: -12px; width: 54px; height: 98px; color: var(--sage); opacity: .6; transform: rotate(24deg); }
+.deco--words-flower { z-index: 3; bottom: -14px; left: -8px; width: 30px; height: 30px; color: var(--rose); animation: sway 8s ease-in-out infinite alternate; }
+
+/* Cabecera */
+.words__head { position: relative; text-align: center; }
+.words__title {
+  margin: 18px 0 20px;
+  font: 500 clamp(34px, 10vw, 42px)/1.08 var(--font-serif);
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+.words__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+.words__divider::before,
+.words__divider::after {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: var(--sage);
+}
+.words__divider svg { width: 12px; height: 12px; fill: var(--rose-deep); }
+
+/* Texto de la carta: serif, tamaño generoso, alineado a la izquierda */
+.words__body {
+  position: relative;
+  color: rgba(25, 61, 50, .92);
+}
+.words__greeting {
+  margin: 0 0 18px;
+  font: italic 600 clamp(24px, 7vw, 28px)/1.2 var(--font-serif);
+}
+.words__p {
+  margin: 0 0 1.05em;
+  font: 500 clamp(19px, 5.4vw, 21px)/1.7 var(--font-serif);
+  text-wrap: pretty;
+}
+
+/* Despedida y firma */
+.words__foot {
+  position: relative;
+  margin-top: 30px;
+  text-align: right;
+}
+.words__close {
+  margin: 0 0 4px;
+  font: italic 500 clamp(19px, 5.4vw, 21px)/1.4 var(--font-serif);
+  color: rgba(25, 61, 50, .82);
+}
+.words__sign {
+  margin: 0;
+  font: italic 600 clamp(32px, 9.6vw, 38px)/1.1 var(--font-serif);
+  color: var(--forest);
+}
+
+/* Aparición suave. Estas clases las añade js/letter.js, así que sin
+   JavaScript nada queda oculto. --d = retraso (lo calcula el script). */
+.will-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity   1s var(--ease-out) var(--d, 0s),
+    transform 1s var(--ease-out) var(--d, 0s);
+}
+.words__card.will-reveal { transform: translateY(26px) scale(.985); transition-duration: 1.2s; }
+.will-reveal.is-in { opacity: 1; transform: none; }
 
 
 /* ---------- 9. MOVIMIENTO REDUCIDO ----------
@@ -851,6 +1186,14 @@ html.is-locked body {
   .cal__heart { transform: none; transition: opacity .4s ease; }
   .deco,
   .scroll-cue__line::after { animation: none; }
+
+  /* Sección 03: la foto cambia de tamaño sin animación */
+  .polaroid,
+  .gallery__dot { transition: none; }
+
+  /* Sección 04: la carta solo hace un fundido corto */
+  .will-reveal,
+  .words__card.will-reveal { transform: none; transition-duration: .5s; transition-delay: 0s; }
 }
 
 @keyframes letter-show {
