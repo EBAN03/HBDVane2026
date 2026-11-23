@@ -1,1 +1,152 @@
-<h1> Feliz Cumpleaños </h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#193D32">
+  <meta name="robots" content="noindex">
+  <meta name="description" content="Una sorpresa de cumpleaños para Vanessa">
+  <title>Para Vanessa</title>
+
+  <!-- Tipografías: Cormorant Garamond (títulos) y DM Sans (textos) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@400;500&display=swap">
+
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!--
+    Script mínimo que se ejecuta ANTES de pintar la página.
+    Decide si la animación de bienvenida ya se vio en esta visita
+    (sessionStorage dura mientras la pestaña siga abierta) para evitar
+    el "parpadeo" de la pantalla de inicio al recargar.
+    Para volver a ver la animación mientras pruebas: añade ?reset a la URL.
+  -->
+  <script>
+    (function () {
+      var KEY = 'vanessa-intro-v1';
+      var root = document.documentElement;
+      try {
+        if (/[?&]reset\b/.test(location.search)) sessionStorage.removeItem(KEY);
+        root.classList.add(sessionStorage.getItem(KEY) ? 'intro-seen' : 'is-locked');
+      } catch (e) {
+        root.classList.add('is-locked');
+      }
+    })();
+  </script>
+
+  <!-- "defer": el script se ejecuta cuando el HTML ya está listo -->
+  <script src="js/main.js" defer></script>
+
+  <!-- Si el navegador tiene JavaScript desactivado, saltamos la bienvenida -->
+  <noscript>
+    <style>
+      .intro { display: none !important; }
+      .main__inner { opacity: 1 !important; transform: none !important; }
+    </style>
+  </noscript>
+</head>
+
+<body>
+
+  <!-- Símbolos SVG reutilizables (no se ven; se invocan con <use>) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <!-- Ramita botánica de línea fina -->
+      <symbol id="sprig" viewBox="0 0 120 220">
+        <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M60 215 C58 160 64 100 60 8"/>
+          <path d="M60 190 C44 186 32 174 30 160 C46 162 58 174 60 190"/>
+          <path d="M60 190 C76 186 88 174 90 160 C74 162 62 174 60 190"/>
+          <path d="M60 156 C44 152 32 140 30 126 C46 128 58 140 60 156"/>
+          <path d="M60 156 C76 152 88 140 90 126 C74 128 62 140 60 156"/>
+          <path d="M60 122 C44 118 32 106 30 92 C46 94 58 106 60 122"/>
+          <path d="M60 122 C76 118 88 106 90 92 C74 94 62 106 60 122"/>
+          <path d="M60 88 C44 84 32 72 30 58 C46 60 58 72 60 88"/>
+          <path d="M60 88 C76 84 88 72 90 58 C74 60 62 72 60 88"/>
+          <path d="M60 54 C44 50 32 38 30 24 C46 26 58 38 60 54"/>
+          <path d="M60 54 C76 50 88 38 90 24 C74 26 62 38 60 54"/>
+        </g>
+      </symbol>
+
+      <!-- Estrella de cuatro puntas -->
+      <symbol id="star" viewBox="0 0 24 24">
+        <path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/>
+      </symbol>
+
+      <!-- Corazón -->
+      <symbol id="heart" viewBox="0 0 24 24">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- =====================================================
+       PÁGINA PRINCIPAL (queda debajo de la bienvenida)
+       Por ahora es solo un marcador de posición.
+       Aquí irán las secciones 2 a 5.
+       ===================================================== -->
+  <main id="main" class="main">
+    <div class="main__inner">
+      <p class="eyebrow eyebrow--dark">02 — Cumpleaños</p>
+      <h2 class="main__title">¡Feliz cumpleaños,<br><em>Vanessa</em>!</h2>
+      <p class="main__note">Aquí continuará la historia…</p>
+    </div>
+  </main>
+
+  <!-- =====================================================
+       PANTALLA DE BIENVENIDA
+       ===================================================== -->
+  <section id="intro" class="intro" aria-labelledby="intro-title">
+
+    <!-- Decoración: marco fino, ramitas y estrellas (no se leen en voz alta) -->
+    <div class="intro__deco" aria-hidden="true">
+      <div class="intro__frame"></div>
+      <svg class="sprig sprig--tl"><use href="#sprig"/></svg>
+      <svg class="sprig sprig--br"><use href="#sprig"/></svg>
+      <svg class="star star--1"><use href="#star"/></svg>
+      <svg class="star star--2"><use href="#star"/></svg>
+      <svg class="star star--3"><use href="#star"/></svg>
+    </div>
+
+    <p class="eyebrow intro__eyebrow">01 — Bienvenida</p>
+    <p class="intro__date" aria-hidden="true">25 · Nov · 2026</p>
+
+    <div class="stage">
+
+      <!-- El sobre -->
+      <div class="envelope-wrap">
+        <div class="envelope" id="envelope" role="img" aria-label="Un sobre cerrado con un sello en forma de corazón">
+          <div class="envelope__back"></div>
+
+          <!-- La carta, escondida dentro del sobre -->
+          <div class="letter" id="letter" role="status" aria-hidden="true">
+            <p class="letter__eyebrow">Para Vanessa</p>
+            <p class="letter__title">Feliz cumpleaños</p>
+            <span class="letter__rule"></span>
+            <!-- Cambia este mensaje por el que quieras -->
+            <p class="letter__text">Hoy es tu día y preparé algo especial para ti.</p>
+            <p class="letter__sign">— JonEBAN</p>
+          </div>
+
+          <div class="envelope__front"></div>
+
+          <div class="flap"><div class="flap__shape"></div></div>
+
+          <div class="seal"><svg><use href="#heart"/></svg></div>
+        </div>
+      </div>
+
+      <h1 id="intro-title" class="intro__title">Tienes una sorpresa esperándote</h1>
+
+      <div class="intro__action">
+        <button id="open-btn" class="btn" type="button">Abrir sorpresa</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Capa de globos: encima de todo, no bloquea toques ni scroll -->
+  <div id="balloons" class="balloons" aria-hidden="true"></div>
+
+</body>
+</html>

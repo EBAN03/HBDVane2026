@@ -1,0 +1,549 @@
+/* ==========================================================
+   HBD VANESSA 2026 — Hoja de estilos
+   Índice:
+     1. Variables (paleta, tipografías, curvas)
+     2. Base
+     3. Pantalla de bienvenida (fondo y decoración)
+     4. El sobre (estructura)
+     5. Textos y botón
+     6. Secuencia de apertura (animaciones)
+     7. Globos
+     8. Página principal (provisional)
+     9. Movimiento reducido
+   ========================================================== */
+
+
+/* ---------- 1. VARIABLES ---------- */
+:root {
+  /* Paleta oficial */
+  --forest: #193D32;
+  --pink:   #F3DCE3;
+  --ivory:  #F8F5EF;
+  --sage:   #A9BBA8;
+
+  /* Tonos derivados (sombras y matices del sobre) */
+  --forest-deep: #10291f;
+  --pink-mid:    #EBCCD7;
+  --pink-deep:   #E3BCCA;
+  --rose:        #E2A9BB;
+
+  /* Tipografías */
+  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-sans:  'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Curvas de animación */
+  --ease-soft: cubic-bezier(.65, 0, .35, 1);
+  --ease-out:  cubic-bezier(.22, .61, .36, 1);
+}
+
+
+/* ---------- 2. BASE ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--forest);
+}
+
+body {
+  margin: 0;
+  background: var(--forest);
+  color: var(--ivory);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mientras la bienvenida está activa no se puede hacer scroll */
+html.is-locked,
+html.is-locked body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* Etiqueta pequeña tipo editorial: «01 — BIENVENIDA» */
+.eyebrow {
+  margin: 0;
+  font: 500 11px/1 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+.eyebrow--dark { color: var(--forest); opacity: .7; }
+
+
+/* ---------- 3. PANTALLA DE BIENVENIDA ---------- */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 38%, #214d3f 0%, var(--forest) 55%, var(--forest-deep) 100%);
+  opacity: 1;
+  /* JS fija --fade (1400ms normal, 500ms con movimiento reducido) */
+  transition: opacity var(--fade, 1400ms) var(--ease-soft);
+}
+.intro.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Grano muy sutil para que el verde no se vea plano */
+.intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .06;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Decoración */
+.intro__deco { position: absolute; inset: 0; pointer-events: none; }
+
+.intro__frame {
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(169, 187, 168, .28);
+  border-radius: 28px;
+}
+
+.sprig {
+  position: absolute;
+  width: 110px;
+  height: 200px;
+  color: var(--sage);
+  opacity: .32;
+}
+.sprig--tl { top: 54px;    left: -26px;  transform: rotate(-24deg); }
+.sprig--br { bottom: 54px; right: -26px; transform: rotate(156deg); }
+
+.star { position: absolute; fill: var(--pink); opacity: .6; animation: twinkle 5s ease-in-out infinite; }
+.star--1 { width: 12px; height: 12px; top: 20%; right: 16%; }
+.star--2 { width: 9px;  height: 9px;  top: 66%; left: 14%;  animation-duration: 6.5s; animation-delay: 1.2s; }
+.star--3 { width: 7px;  height: 7px;  top: 13%; left: 30%;  animation-duration: 4.2s; animation-delay: 2.1s; }
+
+@keyframes twinkle {
+  0%, 100% { opacity: .2; }
+  50%      { opacity: .85; }
+}
+
+/* Textos fijos de las esquinas */
+.intro__eyebrow {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 38px);
+  left: 0; right: 0;
+  text-align: center;
+}
+.intro__date {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 38px);
+  left: 0; right: 0;
+  margin: 0;
+  text-align: center;
+  font: 500 11px/1 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--sage);
+  opacity: .8;
+}
+
+/* Contenedor central */
+.stage {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* ---------- 4. EL SOBRE ---------- */
+/* Capa exterior: solo se encarga del "flotar" suave */
+.envelope-wrap {
+  animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+.envelope {
+  position: relative;
+  width: min(82vw, 340px);
+  aspect-ratio: 4 / 3;
+  margin-bottom: 40px;
+  /* Al abrirse, baja un poco para dejar sitio a la carta */
+  transition: transform 1s var(--ease-soft) .1s;
+}
+
+/* Sombra en el suelo */
+.envelope::after {
+  content: "";
+  position: absolute;
+  left: 10%; right: 10%;
+  bottom: -26px;
+  height: 18px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, .38), transparent 70%);
+  z-index: 0;
+}
+
+/* Interior del sobre (se ve cuando la solapa se abre) */
+.envelope__back {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--pink-deep);
+  border-radius: 8px;
+}
+
+/* Frente del sobre: todo el rectángulo menos el triángulo de arriba */
+.envelope__front {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #F7E7ED 0%, var(--pink) 55%, #EDD0DA 100%);
+  clip-path: polygon(0 0, 50% 54%, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Solapa triangular */
+.flap {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 56%;
+  z-index: 5;
+  transform-origin: 50% 0;
+  transform: perspective(700px) rotateX(0deg);
+  filter: drop-shadow(0 5px 6px rgba(25, 61, 50, .16));
+}
+.flap__shape {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, #F0D5DE 0%, var(--pink-mid) 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+/* Capa oscura que aparece al abrirse (la cara interior es más sombría) */
+.flap__shape::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #D2A3B4;
+  opacity: 0;
+}
+
+/* Sello con corazón */
+.seal {
+  position: absolute;
+  z-index: 6;
+  left: 50%;
+  top: 56%;
+  width: clamp(48px, 17%, 60px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #2d5f4d, var(--forest) 72%);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .35);
+}
+.seal::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1px solid rgba(243, 220, 227, .35);
+}
+.seal svg { width: 44%; height: 44%; fill: var(--pink); }
+
+/* La carta */
+.letter {
+  position: absolute;
+  z-index: 2;
+  left: 6%;
+  width: 88%;
+  top: 7%;
+  height: 86%;
+  padding: 5% 8%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--ivory);
+  color: var(--forest);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+}
+/* Filete interior fino */
+.letter::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgba(169, 187, 168, .55);
+  border-radius: 2px;
+  pointer-events: none;
+}
+.letter__eyebrow {
+  margin: 0 0 6px;
+  font: 500 10px/1 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  opacity: .65;
+}
+.letter__title {
+  margin: 0;
+  font: 600 clamp(25px, 7.4vw, 30px)/1.05 var(--font-serif);
+}
+.letter__rule {
+  display: block;
+  width: 36px;
+  height: 1px;
+  margin: 10px 0;
+  background: var(--sage);
+}
+.letter__text {
+  margin: 0;
+  max-width: 17em;
+  font: italic 500 clamp(17px, 4.8vw, 19px)/1.3 var(--font-serif);
+}
+.letter__sign {
+  margin: 8px 0 0;
+  font: italic 500 17px/1 var(--font-serif);
+  color: #4a6b5c;
+}
+
+
+/* ---------- 5. TEXTOS Y BOTÓN ---------- */
+.intro__title {
+  margin: 0 0 32px;
+  max-width: 11em;
+  text-align: center;
+  font: italic 500 clamp(30px, 9vw, 40px)/1.1 var(--font-serif);
+  color: var(--ivory);
+  text-wrap: balance;
+}
+
+.btn {
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 52px;
+  padding: 0 34px;
+  border: 1px solid rgba(248, 245, 239, .7);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ivory);
+  font: 500 14px/1 var(--font-sans);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: manipulation;              /* evita el retardo de toque en móviles */
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color .3s, color .3s, border-color .3s, transform .2s;
+}
+.btn:active { transform: scale(.97); }
+.btn:focus-visible { outline: 2px solid var(--pink); outline-offset: 4px; }
+.btn:disabled { cursor: default; }
+
+/* El efecto "hover" solo en dispositivos con ratón (en móvil se queda pegado) */
+@media (hover: hover) {
+  .btn:hover { background: var(--pink); border-color: var(--pink); color: var(--forest); }
+}
+
+
+/* ---------- 6. SECUENCIA DE APERTURA ----------
+   La clase .is-opening se añade a #intro desde JavaScript al pulsar el botón.
+   Línea de tiempo aproximada:
+     0.00 s  el sello se desvanece, título y botón se retiran
+     0.15 s  la solapa gira hacia arriba (0.9 s)
+     0.60 s  la carta sale del sobre (1.7 s)
+   ------------------------------------------------------- */
+.is-opening .envelope { transform: translateY(clamp(36px, 8svh, 80px)); }
+.is-opening .envelope-wrap { animation-play-state: paused; }
+
+.is-opening .seal   { animation: seal-pop .5s ease-in forwards; }
+.is-opening .flap   { animation: flap-open .9s var(--ease-soft) .15s forwards; }
+.is-opening .flap__shape::after { animation: flap-shade .9s linear .15s forwards; }
+.is-opening .letter { animation: letter-out 1.7s var(--ease-soft) .6s forwards; }
+
+.is-opening .intro__title,
+.is-opening .intro__action,
+.is-opening .intro__eyebrow {
+  pointer-events: none;
+  animation: fade-away .6s ease forwards;
+}
+
+@keyframes seal-pop {
+  0%   { transform: translate(-50%, -50%) scale(1);   opacity: 1; }
+  30%  { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(.4);  opacity: 0; }
+}
+
+@keyframes flap-open {
+  0%   { transform: perspective(700px) rotateX(0deg);   z-index: 5; }
+  49%  { z-index: 5; }
+  50%  { z-index: 1; }
+  100% { transform: perspective(700px) rotateX(180deg); z-index: 1; }
+}
+
+@keyframes flap-shade {
+  from { opacity: 0; }
+  to   { opacity: .55; }
+}
+
+/* La carta sube por detrás del frente y, al salir, pasa por delante */
+@keyframes letter-out {
+  0%   { transform: translateY(0) scale(1);        z-index: 2; }
+  58%  { transform: translateY(-62%) scale(1);     z-index: 2; }
+  59%  { z-index: 4; }
+  100% { transform: translateY(-40%) scale(1.1);   z-index: 4; }
+}
+
+@keyframes fade-away {
+  to { opacity: 0; transform: translateY(8px); }
+}
+
+
+/* ---------- 7. GLOBOS ----------
+   Cada globo recibe sus propiedades (--x, --size, --dur…) desde JS.
+   Solo se animan transform y opacity (lo más ligero para el navegador).
+   ------------------------------------------------------- */
+.balloons {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  overflow: hidden;
+  pointer-events: none;     /* no estorba toques ni scroll */
+}
+
+.balloon {
+  position: absolute;
+  left: var(--x);
+  bottom: -160px;                         /* nace fuera de la pantalla */
+  width: var(--size);
+  height: calc(var(--size) * 1.22);
+  margin-left: calc(var(--size) / -2);
+  will-change: transform;
+  animation: rise var(--dur) linear var(--delay) both;
+}
+
+.balloon__body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50% 50% 50% 50% / 58% 58% 42% 42%;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, .6) 0, rgba(255, 255, 255, 0) 30%),
+    var(--c);
+  box-shadow: inset -6px -8px 14px rgba(25, 61, 50, .12);
+  transform-origin: 50% 100%;
+  animation: sway var(--sway) ease-in-out infinite alternate;
+}
+/* Nudo */
+.balloon__body::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 9px;
+  height: 7px;
+  margin: -2px 0 0 -4.5px;
+  background: var(--c);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+/* Cuerda */
+.balloon__body::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 5px);
+  width: 1px;
+  height: 74px;
+  background: rgba(169, 187, 168, .9);
+}
+
+@keyframes rise {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(var(--drift, 0px), calc(-100vh - 380px), 0); }
+}
+@keyframes sway {
+  from { transform: rotate(-5deg); }
+  to   { transform: rotate(5deg); }
+}
+
+
+/* ---------- 8. PÁGINA PRINCIPAL (PROVISIONAL) ----------
+   Siempre está debajo de la bienvenida; al desvanecerse esta,
+   el contenido sube suavemente (.main__inner).
+   ------------------------------------------------------- */
+.main {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 96px 24px;
+  text-align: center;
+  background: var(--ivory);
+  color: var(--forest);
+}
+.main:focus { outline: none; }
+
+.main__inner {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 1.2s var(--ease-out) .35s, transform 1.2s var(--ease-out) .35s;
+}
+.main.is-visible .main__inner { opacity: 1; transform: none; }
+
+.main__title {
+  margin: 20px 0 16px;
+  font: 500 clamp(40px, 11.5vw, 56px)/1.08 var(--font-serif);
+}
+.main__title em { font-style: italic; }
+.main__note { margin: 0; opacity: .6; font-size: 15px; }
+
+/* Visitas repetidas: la bienvenida ni se muestra */
+.intro-seen .intro { display: none; }
+.intro-seen .main__inner { opacity: 1; transform: none; transition: none; }
+
+
+/* ---------- 9. MOVIMIENTO REDUCIDO ----------
+   Si el sistema del visitante pide menos movimiento: sin flotar,
+   sin brillos, sin giro de solapa ni carta deslizante.
+   La carta simplemente aparece con un fundido corto. (Los globos
+   ni se crean: lo decide main.js.)
+   ------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .envelope-wrap,
+  .star { animation: none; }
+
+  .is-opening .envelope { transform: none; transition: none; }
+  .is-opening .seal { animation: none; opacity: 0; }
+  .is-opening .flap { animation: none; transform: perspective(700px) rotateX(180deg); z-index: 1; }
+  .is-opening .flap__shape::after { animation: none; opacity: .55; }
+  .is-opening .letter {
+    transform: translateY(-40%) scale(1.1);
+    z-index: 4;
+    animation: letter-show .5s ease both;
+  }
+  .is-opening .intro__title,
+  .is-opening .intro__action,
+  .is-opening .intro__eyebrow { animation: none; opacity: 0; }
+
+  .main__inner { transition-duration: .4s; transition-delay: 0s; }
+}
+
+@keyframes letter-show {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
