@@ -1,5 +1,10 @@
 /* ==========================================================
    HBD VANESSA 2026 — Lógica de la pantalla de bienvenida
+   Qué hace este archivo:
+     1. Comprueba si la bienvenida ya se vio en esta visita.
+     2. Al pulsar el botón, lanza la secuencia:
+        abrir sobre → carta → globos → desvanecer → revelar página.
+     3. Respeta la preferencia de "movimiento reducido".
    ========================================================== */
 
 (() => {
@@ -34,6 +39,8 @@
     main.removeAttribute('aria-hidden');
     main.classList.add('is-visible');
     root.classList.remove('is-locked');
+    // Avisa a celebration.js de que ya puede lanzar sus animaciones de entrada
+    document.dispatchEvent(new CustomEvent('intro:revealed'));
   }
 
   // Guarda que la bienvenida ya se vio (dura mientras la pestaña siga abierta)
