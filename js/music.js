@@ -40,7 +40,7 @@
 
 
   /* ---------- Estado visual ----------
-     Estados: playing · paused · blocked · error                  */
+    Estados: playing · paused · blocked · error                  */
   function setState(state, message) {
     const playing = state === 'playing';
     player.dataset.state = state;
