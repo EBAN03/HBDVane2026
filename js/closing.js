@@ -20,11 +20,11 @@
      • No se inventó ningún lugar ni detalle: son marcadores.
      ========================================================== */
   const COUPON = {
-    plan:     '[Escribe aquí el plan]',
-    date:     '[Escribe aquí la fecha]',
-    note:     '[Escribe aquí una frase sorpresa]',
+    plan:     'Spa para dos: piscina, masajes, mascarilla y cena',
+    date:     'Miércoles 25 de noviembre 10:15 AM',
+    note:     'Un día para recordarte lo mucho que te mereces',
     // Mensaje que aparece al pulsar «Reclamar mi sorpresa»
-    surprise: '[Escribe aquí el mensaje que se revela al reclamar]'
+    surprise: 'Disfruta cada segundo, te lo has ganado. 🌿✨'
   };
 
   const CLAIMED_LABEL = 'Sorpresa reclamada';
